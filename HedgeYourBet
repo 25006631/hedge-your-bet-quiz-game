@@ -1,0 +1,257 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ */
+
+package com.mycompany.hedgeyourbet;
+
+/**
+ *
+ * @author Mukhethwa
+ */
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+
+public class HedgeYourBet extends JFrame implements ActionListener {
+
+    // Questions
+    String[] questions = {
+        "What is the capital city of South Africa?",
+        "Which province is Cape Town located in?",
+        "Who was South Africa's first democratically elected president?",
+        "What is the currency of South Africa?",
+        "Which mountain is a famous landmark in Cape Town?"
+    };
+
+    // Three possible answers for each question
+    String[][] answers = {
+        {"Pretoria", "Johannesburg", "Bloemfontein"},
+        {"Western Cape", "Eastern Cape", "KwaZulu-Natal"},
+        {"Nelson Mandela", "Thabo Mbeki", "Jacob Zuma"},
+        {"Rand", "Pula", "Dollar"},
+        {"Table Mountain", "Drakensberg", "Magaliesberg"}
+    };
+
+    // Correct answer for each question
+    int[] correctAnswer = {0, 0, 0, 0, 0};
+
+    int questionNumber = 0;
+    int score = 0;
+
+    JLabel questionLabel;
+    JLabel scoreLabel;
+
+    JCheckBox answer1;
+    JCheckBox answer2;
+    JCheckBox answer3;
+
+    JButton submitButton;
+
+
+    public HedgeYourBet() {
+
+        setTitle("South African Quiz");
+        setSize(600, 400);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+
+        // Question
+        questionLabel = new JLabel();
+        questionLabel.setFont(new Font("Arial", Font.BOLD, 18));
+
+        // Answers
+        answer1 = new JCheckBox();
+        answer2 = new JCheckBox();
+        answer3 = new JCheckBox();
+
+        answer1.setFont(new Font("Arial", Font.PLAIN, 16));
+        answer2.setFont(new Font("Arial", Font.PLAIN, 16));
+        answer3.setFont(new Font("Arial", Font.PLAIN, 16));
+
+        // Submit button
+        submitButton = new JButton("Submit Answer");
+        submitButton.addActionListener(this);
+
+        // Score
+        scoreLabel = new JLabel("Score: 0");
+        scoreLabel.setFont(new Font("Arial", Font.BOLD, 16));
+
+        // Panel
+        JPanel panel = new JPanel();
+
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+
+        panel.setBorder(
+            BorderFactory.createEmptyBorder(30, 30, 30, 30)
+        );
+
+        panel.add(questionLabel);
+        panel.add(Box.createVerticalStrut(20));
+
+        panel.add(answer1);
+        panel.add(answer2);
+        panel.add(answer3);
+
+        panel.add(Box.createVerticalStrut(20));
+
+        panel.add(submitButton);
+
+        panel.add(Box.createVerticalStrut(20));
+
+        panel.add(scoreLabel);
+
+        add(panel);
+
+        displayQuestion();
+
+        setVisible(true);
+    }
+
+
+    // Display the current question
+    public void displayQuestion() {
+
+        questionLabel.setText(
+            "Question " + (questionNumber + 1) +
+            " of 5: " +
+            questions[questionNumber]
+        );
+
+        answer1.setText(answers[questionNumber][0]);
+        answer2.setText(answers[questionNumber][1]);
+        answer3.setText(answers[questionNumber][2]);
+
+        answer1.setSelected(false);
+        answer2.setSelected(false);
+        answer3.setSelected(false);
+    }
+
+
+    // Check the answer
+    public void checkAnswer() {
+
+        int numberSelected = 0;
+
+        if (answer1.isSelected()) {
+            numberSelected++;
+        }
+
+        if (answer2.isSelected()) {
+            numberSelected++;
+        }
+
+        if (answer3.isSelected()) {
+            numberSelected++;
+        }
+
+
+        boolean correct = false;
+
+        // Check if the correct answer was selected
+        if (answer1.isSelected() &&
+            correctAnswer[questionNumber] == 0) {
+
+            correct = true;
+        }
+
+        if (answer2.isSelected() &&
+            correctAnswer[questionNumber] == 1) {
+
+            correct = true;
+        }
+
+        if (answer3.isSelected() &&
+            correctAnswer[questionNumber] == 2) {
+
+            correct = true;
+        }
+
+
+        // Award points
+        if (correct) {
+
+            if (numberSelected == 1) {
+                score += 5;
+            }
+
+            else if (numberSelected == 2) {
+                score += 2;
+            }
+
+            else if (numberSelected == 3) {
+                score += 1;
+            }
+        }
+
+
+        scoreLabel.setText("Score: " + score);
+
+
+        // Move to next question
+        questionNumber++;
+
+
+        if (questionNumber < 5) {
+
+            displayQuestion();
+
+        } else {
+
+            finishQuiz();
+        }
+    }
+
+
+    // Display final result
+    public void finishQuiz() {
+
+        String message;
+
+        if (score > 21) {
+            message = "Fantastic!";
+        }
+
+        else if (score > 15) {
+            message = "Very good";
+
+        }
+
+        else {
+            message = "OK";
+        }
+
+
+        questionLabel.setText(
+            "<html>Quiz Complete!<br><br>" +
+            "Your final score is " + score +
+            " out of 25<br><br>" +
+            message +
+            "</html>"
+        );
+
+
+        answer1.setVisible(false);
+        answer2.setVisible(false);
+        answer3.setVisible(false);
+
+        submitButton.setVisible(false);
+    }
+
+
+    // Button event
+    @Override
+    public void actionPerformed(ActionEvent e) {
+
+        if (e.getSource() == submitButton) {
+
+            checkAnswer();
+        }
+    }
+
+
+    // Main method
+    public static void main(String[] args) {
+
+        new HedgeYourBet();
+    }
+}
