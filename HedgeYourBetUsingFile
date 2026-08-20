@@ -1,0 +1,377 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package com.mycompany.hedgeyourbet;
+
+/**
+ *
+ * @author Mukhethwa
+ */
+
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.io.*;
+import java.util.Scanner;
+
+public class HedgeYourBetUsingFile extends JFrame implements ActionListener {
+
+    String[] questions = {
+        "What is the capital city of South Africa?",
+        "Which province is Cape Town located in?",
+        "Who was South Africa's first democratically elected president?",
+        "What is the currency of South Africa?",
+        "Which mountain is a famous landmark in Cape Town?"
+    };
+
+    String[][] answers = {
+        {"Pretoria", "Johannesburg", "Bloemfontein"},
+        {"Western Cape", "Eastern Cape", "KwaZulu-Natal"},
+        {"Nelson Mandela", "Thabo Mbeki", "Jacob Zuma"},
+        {"Rand", "Pula", "Dollar"},
+        {"Table Mountain", "Drakensberg", "Magaliesberg"}
+    };
+
+    int[] correctAnswer = {0, 0, 0, 0, 0};
+
+    int questionNumber = 0;
+    int score = 0;
+    int previousScore = 0;
+
+    JLabel questionLabel;
+    JLabel scoreLabel;
+    JLabel previousScoreLabel;
+
+    JCheckBox answer1;
+    JCheckBox answer2;
+    JCheckBox answer3;
+
+    JButton submitButton;
+
+
+    public HedgeYourBetUsingFile() {
+
+        setTitle("South African Quiz");
+        setSize(600, 450);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+
+
+        // Read previous score
+        previousScore = readPreviousScore();
+
+
+        // Previous score
+        previousScoreLabel =
+            new JLabel("Previous Score: " + previousScore);
+
+        previousScoreLabel.setFont(
+            new Font("Arial", Font.BOLD, 16)
+        );
+
+
+        // Question
+        questionLabel = new JLabel();
+        questionLabel.setFont(
+            new Font("Arial", Font.BOLD, 18)
+        );
+
+
+        // Answers
+        answer1 = new JCheckBox();
+        answer2 = new JCheckBox();
+        answer3 = new JCheckBox();
+
+        answer1.setFont(new Font("Arial", Font.PLAIN, 16));
+        answer2.setFont(new Font("Arial", Font.PLAIN, 16));
+        answer3.setFont(new Font("Arial", Font.PLAIN, 16));
+
+
+        // Button
+        submitButton = new JButton("Submit Answer");
+        submitButton.addActionListener(this);
+
+
+        // Score
+        scoreLabel = new JLabel("Score: 0");
+
+        scoreLabel.setFont(
+            new Font("Arial", Font.BOLD, 16)
+        );
+
+
+        // Panel
+        JPanel panel = new JPanel();
+
+        panel.setLayout(
+            new BoxLayout(panel, BoxLayout.Y_AXIS)
+        );
+
+        panel.setBorder(
+            BorderFactory.createEmptyBorder(
+                30, 30, 30, 30
+            )
+        );
+
+
+        panel.add(previousScoreLabel);
+
+        panel.add(Box.createVerticalStrut(20));
+
+        panel.add(questionLabel);
+
+        panel.add(Box.createVerticalStrut(20));
+
+        panel.add(answer1);
+        panel.add(answer2);
+        panel.add(answer3);
+
+        panel.add(Box.createVerticalStrut(20));
+
+        panel.add(submitButton);
+
+        panel.add(Box.createVerticalStrut(20));
+
+        panel.add(scoreLabel);
+
+
+        add(panel);
+
+        displayQuestion();
+
+        setVisible(true);
+    }
+
+
+    // Read the previous score
+    public int readPreviousScore() {
+
+        File file = new File("previousScore.txt");
+
+
+        // If the file does not exist
+        if (!file.exists()) {
+
+            return 0;
+        }
+
+
+        try {
+
+            Scanner scanner =
+                new Scanner(file);
+
+            int score = scanner.nextInt();
+
+            scanner.close();
+
+            return score;
+
+        } catch (Exception e) {
+
+            return 0;
+        }
+    }
+
+
+    // Save the score
+    public void saveScore() {
+
+        try {
+
+            FileWriter writer =
+                new FileWriter("previousScore.txt");
+
+            writer.write(String.valueOf(score));
+
+            writer.close();
+
+        } catch (IOException e) {
+
+            JOptionPane.showMessageDialog(
+                this,
+                "Error saving score."
+            );
+        }
+    }
+
+
+    // Display question
+    public void displayQuestion() {
+
+        questionLabel.setText(
+            "<html>Question " +
+            (questionNumber + 1) +
+            " of 5:<br>" +
+            questions[questionNumber] +
+            "</html>"
+        );
+
+
+        answer1.setText(
+            answers[questionNumber][0]
+        );
+
+        answer2.setText(
+            answers[questionNumber][1]
+        );
+
+        answer3.setText(
+            answers[questionNumber][2]
+        );
+
+
+        answer1.setSelected(false);
+        answer2.setSelected(false);
+        answer3.setSelected(false);
+    }
+
+
+    // Check answer
+    public void checkAnswer() {
+
+        int numberSelected = 0;
+
+
+        if (answer1.isSelected()) {
+            numberSelected++;
+        }
+
+        if (answer2.isSelected()) {
+            numberSelected++;
+        }
+
+        if (answer3.isSelected()) {
+            numberSelected++;
+        }
+
+
+        boolean correct = false;
+
+
+        if (answer1.isSelected() &&
+            correctAnswer[questionNumber] == 0) {
+
+            correct = true;
+        }
+
+
+        if (answer2.isSelected() &&
+            correctAnswer[questionNumber] == 1) {
+
+            correct = true;
+        }
+
+
+        if (answer3.isSelected() &&
+            correctAnswer[questionNumber] == 2) {
+
+            correct = true;
+        }
+
+
+        // Give points
+        if (correct) {
+
+            if (numberSelected == 1) {
+
+                score += 5;
+            }
+
+            else if (numberSelected == 2) {
+
+                score += 2;
+            }
+
+            else if (numberSelected == 3) {
+
+                score += 1;
+            }
+        }
+
+
+        scoreLabel.setText(
+            "Score: " + score
+        );
+
+
+        questionNumber++;
+
+
+        if (questionNumber < 5) {
+
+            displayQuestion();
+
+        } else {
+
+            finishQuiz();
+        }
+    }
+
+
+    // Finish quiz
+    public void finishQuiz() {
+
+        // Save score
+        saveScore();
+
+
+        String message;
+
+
+        if (score > 21) {
+
+            message = "Fantastic!";
+
+        }
+
+        else if (score > 15) {
+
+            message = "Very good";
+
+        }
+
+        else {
+
+            message = "OK";
+        }
+
+
+        questionLabel.setText(
+            "<html>Quiz Complete!<br><br>" +
+            "Previous Score: " +
+            previousScore +
+            "<br>" +
+            "Final Score: " +
+            score +
+            " out of 25<br><br>" +
+            message +
+            "</html>"
+        );
+
+
+        answer1.setVisible(false);
+        answer2.setVisible(false);
+        answer3.setVisible(false);
+
+        submitButton.setVisible(false);
+    }
+
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+
+        if (e.getSource() == submitButton) {
+
+            checkAnswer();
+        }
+    }
+
+
+    public static void main(String[] args) {
+
+        new HedgeYourBetUsingFile();
+    }
+}
